@@ -11,7 +11,6 @@ mongoose.connect("mongodb://localhost:27017/userDB", {useNewUrlParser: true,useU
 const patientSchema = new mongoose.Schema ({
   name: String,
   password: String,
-  predictions: []
 });
 const doctorSchema = new mongoose.Schema ({
   name:String,
@@ -43,14 +42,15 @@ app.post("/patientregister",function(req,res){
      const newpatient = new Patient({
          name:req.body.name,
          password:req.body.password,
-         prediction:[]
      });
      newpatient.save(function(err){
      	if(err){
      		console.log("error");
      	}
      	else{
-     		res.redirect("/");
+        Prediction.find({name:req.body.name},function(err,result){
+             res.render("patient",{username:foundUser.name,result:result});
+          });
      	}
      });
 });
@@ -67,7 +67,7 @@ app.post("/doctorregister",function(req,res){
      		console.log("error");
      	}
      	else{
-     		res.redirect("/");
+     		res.redirect("/login");
      	}
      });
 });
