@@ -1,0 +1,26 @@
+{
+  "name": "finalproj",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "body-parser": "^1.19.0",
+    "child-process": "^1.0.2",
+    "date-and-time": "^0.13.1",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.0.2",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "mongoose": "^5.9.7",
+    "node-datetime": "^2.1.2",
+    "passport": "^0.4.1",
+    "passport-local-mongoose": "^6.0.1"
+  }
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style type="text/css">
+		body{
+    background: url(https://previews.123rf.com/images/ipopba/ipopba1803/ipopba180300011/97349171-medicine-doctor-and-stethoscope-touching-icon-medical-network-connection-with-modern-virtual-screen-.jpg) no-repeat center center fixed;
+      background-size: cover;
+   }
+	</style>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+	<title>doctorhomepage</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    	<form class="form-inline" method="GET" action="/login">
+    <button class="btn btn-outline-success" type="submit">signout</button>
+  </form>
+    </nav>
+    <div class="container">
+    <h2>welcome  <%=username%> !!</h2>
+    <table class=" table table-dark">
+      <thead>
+        <tr>
+          <th scope="col">.</th>
+          <th scope="col">time and date</th>
+          <th scope="col">predictions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for(var i=0;i<result.length;i++){ %>
+        <tr>
+            <td scope="col">
+              <p>.</p>
+            </td>
+           <td>
+           <%=result[i].time%>        
+         </td>
+          <td> 
+           <%=result[i].prediction%>
+          </td>
+           </tr>
+        <%}%>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

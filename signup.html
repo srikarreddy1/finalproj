@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" id="bootstrap-css">
+ <style type="text/css">
+   body{
+    background: url(https://previews.123rf.com/images/ipopba/ipopba1803/ipopba180300011/97349171-medicine-doctor-and-stethoscope-touching-icon-medical-network-connection-with-modern-virtual-screen-.jpg) no-repeat center center fixed;
+      background-size: cover;
+   }
+   form { margin: 0px 10px; }
+
+h2 {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.container { max-width: 360px;margin-top:5%;  }
+
+.divider {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+.divider hr {
+  margin: 7px 0px;
+  width: 35%;
+}
+
+.left { float: left; }
+
+.right { float: right; }
+
+ </style>
+  <title>signup</title>
+</head>
+<body>
+    <div class="container">
+    <div class="row">
+      <div class="panel panel-primary">
+        <div class="panel-body">
+          <form method="POST" action="/patientregister" role="form">
+            <div class="form-group">
+              <h2>Create account</h2>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="signupName">Your name</label>
+              <input name="name" id="signupName" type="text" maxlength="50" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="signupPassword">Password</label>
+              <input name="password" id="signupPassword" type="password" maxlength="25" class="form-control" placeholder="at least 6 characters" length="40">
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="signupPasswordagain">Password again</label>
+              <input id="signupPasswordagain" type="password" maxlength="25" class="form-control">
+            </div>
+            <div class="form-group">
+              <button id="signupSubmit" type="submit" class="btn btn-info btn-block">Create your account</button>
+            </div>
+            <hr>
+            <p></p>Already have an account? <a href="/login">Sign in</a></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
