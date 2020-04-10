@@ -39,6 +39,7 @@ app.get("/patientregister",function(req,res){
    res.sendFile(__dirname+"/signup.html");
 });
 app.post("/patientregister",function(req,res){
+     
      const newpatient = new Patient({
          name:req.body.name,
          password:req.body.password,
@@ -49,7 +50,7 @@ app.post("/patientregister",function(req,res){
      	}
      	else{
         Prediction.find({name:req.body.name},function(err,result){
-             res.render("patient",{username:foundUser.name,result:result});
+             res.render("patient",{username:req.body.name,result:result});
           });
      	}
      });
