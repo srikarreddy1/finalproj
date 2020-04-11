@@ -45,8 +45,9 @@ arg10=sys.argv[10]
 arg11=sys.argv[11]
 arg12=sys.argv[12]
 arg13=sys.argv[13]
+arg14=sys.argv[14]
 test = {'age':[arg1], 'sex':[arg2], 'chest_pain_type':[arg3], 'resting_blood_pressure':[arg4], 'cholesterol':[arg5], 'fasting_blood_sugar':[arg6], 'rest_ecg':[arg7], 'max_heart_rate_achieved':[arg8],'exercise_induced_angina':[arg9], 'st_depression':[arg10], 'st_slope':[arg11], 'num_major_vessels':[arg12], 'thalassemia':[arg13]}
 testdata=pd.DataFrame(test)
 predicton=nb.predict(testdata)
-print(predicton)
+print(predicton,arg14)
 

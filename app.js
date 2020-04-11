@@ -1,6 +1,9 @@
 const express = require("express");
 const bodyparser = require("body-parser");
 const ejs = require("ejs");
+const multer=require('multer');
+const xlstojson=require("xls-to-json-lc");
+const xlsxtojson=require("xlsx-to-json-lc");
 const date = require('date-and-time');
 const mongoose = require("mongoose");
 const app = express();
@@ -24,6 +27,24 @@ const predictionSchema = new mongoose.Schema ({
 const Patient=new mongoose.model("Patient",patientSchema);
 const Doctor = new mongoose.model("Doctor",doctorSchema);
 const Prediction = new mongoose.model("Prediction",predictionSchema);
+var storage = multer.diskStorage({ 
+        destination: function (req, file, cb) {
+            cb(null, './uploads/')
+        },
+        filename: function (req, file, cb) {
+            var datetimestamp = Date.now();
+            cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
+        }
+    });
+var upload = multer({
+                    storage: storage,
+                    fileFilter : function(req, file, callback) {
+                        if (['xls', 'xlsx'].indexOf(file.originalname.split('.')[file.originalname.split('.').length-1]) === -1) {
+                            return callback(new Error('Wrong extension type'));
+                        }
+                        callback(null, true);
+                    }
+                }).single('file');
 app.get("/",function(req,res){
 	 res.sendFile(__dirname+"/starting.html");
 });
@@ -39,7 +60,7 @@ app.get("/patientregister",function(req,res){
    res.sendFile(__dirname+"/signup.html");
 });
 app.post("/patientregister",function(req,res){
-     
+      
      const newpatient = new Patient({
          name:req.body.name,
          password:req.body.password,
@@ -114,70 +135,75 @@ app.post("/login",function(req,res){
 app.post("/predict1",function(req,res){
    res.render("proj",{name:req.body.btn})
 });
-app.post("/predict",function(req,res){
-  console.log(req.body);
-  Patient.findOne({name:req.body.pname},function(err,foundUser){
-    if(err){
-      console.log(err);
-    }
-    else{
-      if(foundUser){
-        const now = new Date();
-        const time=date.format(now, 'YYYY/MM/DD hh:mm:ss A [IST]',);
-        const age =parseInt(req.body.age);
-        const gender=parseInt(req.body.gridRadios);
-        const chest=parseInt(req.body.chest);
-        const rbp=parseInt(req.body.rbp);
-        const choles=parseInt(req.body.cho);
-        const sugar=parseInt(req.body.gridRadios1);
-        const restecg=parseInt(req.body.restecg);
-         const max=parseInt(req.body.max);
-       const exercise=parseInt(req.body.gridRadios2);
-       const depression=parseInt(req.body.depression);
-       const stslope=parseInt(req.body.stslope);
-       const vessels=parseInt(req.body.vessels);
-       const thal=parseInt(req.body.thal);
-      var spawn=require("child_process").spawn;
-      var pythonProcess=spawn("python",["./proj.py",age,gender,chest,rbp,choles,sugar,restecg,max,exercise,depression,stslope,vessels,thal]);
-      pythonProcess.stdout.on("data",function(data){
-           var data=data.toString();
-           d=data.split("");
-           if(d[1]==='1'){
-             const newprediction=new Prediction({
-               name:req.body.pname,
-               prediction:"low chance of heart disease",
-               time:time
-             });
-             newprediction.save(function(err){
-              if (err) {
-                console.log(err);
-              }
-             });
-             Patient.find({},function(err,result){
-                res.render("doctor",{username:"",result:result});
-             })
-           }else{
-             const newprediction=new Prediction({
-               name:req.body.pname,
-               prediction:"preety good chance of heart disease",
-               time:time
-             });
-             newprediction.save(function(err){
-              if (err) {
-                console.log(err);
-              }
-             });
-             Patient.find({},function(err,result){
-                res.render("doctor",{username:"",result:result});
-             })
-           }
-    });
+app.post("/predict",function(req,res){ 
+  var exceltojson;
+        upload(req,res,function(err){
+            if(req.file.originalname.split('.')[req.file.originalname.split('.').length-1] === 'xlsx'){
+                exceltojson = xlsxtojson;
+            } else {
+                exceltojson = xlstojson;
+            }
+            try {
+                exceltojson({
+                    input: req.file.path,
+                    output: null, 
+                    lowerCaseHeaders:true
+                }, function(err,result){
+                    for(var i=0;i<result.length;i++){
+                         console.log(result[i])
+                         const name = result[i].name;
+                         const now = new Date();
+                         const time=date.format(now, 'YYYY/MM/DD hh:mm:ss A [IST]',);
+                         const age =parseInt(result[i].age);
+                         const gender=parseInt(result[i].sex);
+                         const chest=parseInt(result[i].cp);
+                         const rbp=parseInt(result[i].trestbps);
+                         const choles=parseInt(result[i].chol);
+                         const sugar=parseInt(result[i].fbs);
+                         const restecg=parseInt(result[i].restecg);
+                         const max=parseInt(result[i].thalach);
+                         const exercise=parseInt(result[i].exang);
+                         const depression=parseInt(result[i].oldpeak);
+                         const stslope=parseInt(result[i].slope);
+                         const vessels=parseInt(result[i].ca);
+                         const thal=parseInt(result[i].thal);
+                         var spawn=require("child_process").spawn;
+                        var pythonProcess=spawn("python",["./proj.py",age,gender,chest,rbp,choles,sugar,restecg,max,exercise,depression,stslope,vessels,thal,name]);
+                        pythonProcess.stdout.on("data",function(data){
+                              var data=data.toString();
+                              d=data.split(",");
+                              d=d[0].split(" ");
+                              var name=d[1].replace("\r\n","");
+                              console.log(name);
+                             if(d[0]==='[1]'){
+                             const newprediction=new Prediction({
+                             name:name,
+                             prediction:"low chance of heart disease",
+                            time:time
+                                });
+                           newprediction.save(function(err){
+                             if (err) {
+                                console.log(err);
+                                }
+                               });
 
-      }
-    }
-  })
-	
-
+                             }else{
+                         const newprediction=new Prediction({
+                         name:name,
+                         prediction:"preety good chance of heart disease",
+                         time:time
+                                 });
+                        newprediction.save(function(err){
+                          if (err) {
+                         console.log(err);
+                             } }); } }); };
+                });
+            } catch (e){
+                res.json({error_code:1,err_desc:"Corupted excel file"});
+            }
+        })
+           res.render("doctor",{username:""});
+  
 });
 app.listen(3000,function(){
 	console.log("server is running");
